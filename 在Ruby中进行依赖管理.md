@@ -26,7 +26,7 @@ $ gem list rails
 $ gem uninstall rails
 ```
 
-而且，*RubyGems*还支持多版本控制！它会自动的帮你把最新版本加入到`$LOAD_PATH`。你也可以在项目中调用`gem`方法，并带有一个版本号，该版本的路径就会被加入`$LOAD_PATH`，后面当你调用 require 的时候，那个指定的版本就是你得到的版本。
+而且，*RubyGems*还支持多版本控制！它会自动的帮你把最新版本加入到`$LOAD_PATH`。你也可以在项目中调用`gem`方法，并带有一个版本号，该版本的路径就会被加入`$LOAD_PATH`，后面当你调用require的时候，那个指定的版本就是你得到的版本。
 
 ```ruby
 gem "rack", "1.0"
@@ -42,7 +42,7 @@ $ rails s
 Gem::LoadError: Can't activate rack (~> 1.0.0., runtime) for ["actionpack-2.3.5"], already activated rack-1.1.0 for ["thin-1.2.7"]
 ```
 
-而*Bundler*就是解决问题的方案，执行`bundle install`命令它会读取项目根目录下用户声明依赖的`Gemfile`文件,通过"Dependency Graph Resolution"过程然后得出一个可行的依赖版本的解，并写入`Gemfile.lock`中。而`bundle exec`会确保在这个命令下运行的*Ruby*代码 require 到的库都是`Gemfile.lock`中指定的那些特定的版本，而且会事先把`$LOAD_PATH`中多余的东西清理掉让你不会误引用到其他的版本。
+而*Bundler*就是解决问题的方案，执行`bundle install`命令它会读取项目根目录下用户声明依赖的`Gemfile`文件,通过"Dependency Graph Resolution"过程然后得出一个可行的依赖版本的解，并写入`Gemfile.lock`中。而`bundle exec`会确保在这个命令下运行的*Ruby*代码require到的库都是`Gemfile.lock`中指定的那些特定的版本，而且会事先把`$LOAD_PATH`中多余的东西清理掉让你不会误引用到其他的版本。
 
 
 
@@ -69,7 +69,7 @@ end
 
 - `source` 告诉*Bundler*你指定的源
 
-- `ruby` 指定ruby版本
+- `ruby` 指定Ruby版本
 
 - `gem` 声明依赖的包名称
 
@@ -136,5 +136,7 @@ gem "nokogiri", "~> 1.6.1"
 
 
 ------
+[Bundler 到底是怎么工作的 (暨 Ruby 依赖管理历史回顾)](https://ruby-china.org/topics/28453)  
+[Bundler 的作用及原理](https://ruby-china.org/topics/25530)
 
 [man-gemfile]: https://bundler.io/man/gemfile.5.html#GLOBAL-SOURCES	"Gemfile 文档"
