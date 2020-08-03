@@ -1,10 +1,10 @@
 # 在Ruby中进行依赖管理
 
-日常编码我们经常会需要重用别人的功能代码，那么我们该怎么做呢？又会带来什么问题呢？通过点"历史"我们来了解下这件事发展的过程。
+日常编码我们经常会需要重用别人的功能代码，那么我们该怎么做呢？又会带来什么问题呢？通过点“历史”我们来了解下这件事发展的过程。
 
-## 了解"历史"
+## 了解“历史”
 
-早期*Ruby*提供了`require`方法用于加载外部代码，让各位猿人们可以引入其他人的代码模块，方便了项目灵活组织代码。`require`有两个全局变量， `$LOADED_FEATURES`记录已加载文件名避免重复加载，`$LOAD_PATH`用于提供未指明路径的文件名可被加载的目录，例如`require "rails"`不需要给出绝对路径，会自动从`$LOAD_PATH`中检索并加载。
+早期*Ruby*提供了`require`方法用于加载外部代码，让各位猿人们可以引入其他人的代码模块，方便了项目灵活组织代码。`require`有两个全局变量， `$LOADED_FEATURES`记录已加载文件名避免重复加载，`$LOAD_PATH`用于提供未指明路径的文件名可被加载的目录，例如`require 'rails'`不需要给出绝对路径，会自动从`$LOAD_PATH`中检索并加载。
 
 
 
@@ -18,7 +18,7 @@
 >
 > Gems可扩展或修改的Ruby应用。通常，将可重用的功能分发共享给其他开发者的应用或库。有些Gems则会提供命令行以帮助自动化任务和提高效率。
 
-通过它提供简单的`gem`命令行工具，如同简介所说，我们可以非常简单的方式可下载、安装、使用*Ruby包*（通常称作做*gem*，为更好区分下文简称"包"）。
+通过它提供简单的`gem`命令行工具，如同简介所说，我们可以非常简单的方式可下载、安装、使用*Ruby包*（通常称作做*gem*，为更好区分下文简称“包”）。
 
 ```bash
 $ gem install rails
@@ -29,8 +29,8 @@ $ gem uninstall rails
 而且，*RubyGems*还支持多版本控制！它会自动的帮你把最新版本加入到`$LOAD_PATH`。你也可以在项目中调用`gem`方法，并带有一个版本号，该版本的路径就会被加入`$LOAD_PATH`，后面当你调用require的时候，那个指定的版本就是你得到的版本。
 
 ```ruby
-gem "rack", "1.0"
-require "rack"
+gem 'rack', '1.0'
+require 'rack'
 ```
 
 
@@ -42,7 +42,7 @@ $ rails s
 Gem::LoadError: Can't activate rack (~> 1.0.0., runtime) for ["actionpack-2.3.5"], already activated rack-1.1.0 for ["thin-1.2.7"]
 ```
 
-而*Bundler*就是解决问题的方案，执行`bundle install`命令它会读取项目根目录下用户声明依赖的`Gemfile`文件,通过"Dependency Graph Resolution"过程然后得出一个可行的依赖版本的解，并写入`Gemfile.lock`中。而`bundle exec`会确保在这个命令下运行的*Ruby*代码require到的库都是`Gemfile.lock`中指定的那些特定的版本，而且会事先把`$LOAD_PATH`中多余的东西清理掉让你不会误引用到其他的版本。
+而*Bundler*就是解决问题的方案，执行`bundle install`命令它会读取项目根目录下用户声明依赖的`Gemfile`文件，通过“Dependency Graph Resolution”过程然后得出一个可行的依赖版本的解，并写入`Gemfile.lock`中。而`bundle exec`会确保在这个命令下的*Ruby*程序能够正常的加载到`Gemfile`及其已被安装在本地的依赖。
 
 
 
@@ -55,13 +55,13 @@ Gem::LoadError: Can't activate rack (~> 1.0.0., runtime) for ["actionpack-2.3.5"
 `Gemfile`是一套**描述*Ruby*程序的*gem依赖*的文件**，通过`Gemfile`可以管理项目所依赖的包并指明引入依赖的条件或环境，实际上它是一份可被*Bundler*执行的*Ruby*代码。
 
 ```ruby
-source "https://rubygems.org"
+source 'https://rubygems.org'
 
-gem "rails", "4.1.0.rc2"
-gem "nokogiri", "~> 1.6.1"
+gem 'rails', '4.1.0.rc2'
+gem 'nokogiri', '~> 1.6.1'
 
 group :production do
-	gem "rack-cache"
+	gem 'rack-cache'
 end
 ```
 
@@ -73,7 +73,7 @@ end
 
 - `gem` 声明依赖的包名称
 
-- `group` 提供一个分组概念，通过*Bundler*的`--with`,`--without`参数可灵活的安装指定包
+- `group` 提供一个分组概念，通过*Bundler*的`--with`，`--without`参数可灵活的安装指定包
 
 像这个例子，第一行指定从`https://rubygems.org`这个源下载*gem*。下面说明我们依赖`rails`、`nokogiri`、`rack-cache`。
 
@@ -82,15 +82,15 @@ end
 
 
 ```ruby
-source "https://rubygems.org"
+source 'https://rubygems.org'
 
-gem "rails", "4.1.0.rc2"
-gem "nokogiri", "~> 1.6.1"
+gem 'rails', '4.1.0.rc2'
+gem 'nokogiri', '~> 1.6.1'
 gem 'activesupport', '5.2.2', :require => ['active_support']
 gem 'harmonious_dictionary', git: 'https://github.com/yeezon/harmonious_dictionary.git'
 
 group :production do
-	gem "rack-cache"
+	gem 'rack-cache'
 end
 ```
 
@@ -99,7 +99,7 @@ end
 - `git` 直接引用依赖的*git*仓库地址，*Bundler*会直接从仓库下载并安装包
 - `require` 支持两种参数；`true`/`false`代表是否
 - `path` 引用本地依赖地址
-- `plaforms` 描述该依赖只在某个平台才引入,默认就是`ruby`
+- `platforms` 描述该依赖只在某个平台才引入，默认就是`ruby`
 
 - 其他可见[Gemfile文档][man-gemfile]
 
@@ -118,11 +118,11 @@ end
 `bundle install`会根据你以及*gem*的依赖计算出可行的版本并记录到`Gemfile.lock`中，下次`bundle install`时就会跳过解决依赖版本这个环节，直接根据`Gemfile.lock`下载并安装*gem*。
 
 ```ruby
-source "https://rubygems.org"
+source 'https://rubygems.org'
 
-gem "rails", "4.1.0.rc2"
-gem "rack-cache", require: "rack/cache"
-gem "nokogiri", "~> 1.6.1"
+gem 'rails', '4.1.0.rc2'
+gem 'rack-cache', require: 'rack/cache'
+gem 'nokogiri', '~> 1.6.1'
 ```
 
 当我们需要更新*gem*版本时可以直接修改`Gemfile`，但如果该版本的*gem*所依赖的包在本地并没有安装过，那启动就会失败，所以通常会推荐通过`bundle update [my_gem]`将它及它的依赖更新到最新的可用的版本。
@@ -130,6 +130,22 @@ gem "nokogiri", "~> 1.6.1"
 避免更新操作导致依赖和依赖之间不兼容这个问题，*Bundler*更新时**采取保守策略**。当更新一个*gem*时，如果有其*gem*有与它相同的依赖，*Bundler*就不会更新那个相同的依赖。举个例子更新`rails`也会更新`rack 1.5.3`，但由于`rack-cache`依赖`rack 1.5.2`，*Bundler*不会更新`rack`。这样保证了更新`rails`不会不小心搞坏`rack-cache`。由于`rails 4.1.0`保留了`rack 1.5.2`的兼容，*Bundler*就不会管它，`rack-cache`就会继续工作。
 
 而`bundle update`则会从头开始解决依赖并重写`Gemfile.lock`，不过这个操作风险很大，你要准备好`git reset --hard`和测试用例，一般不推荐。从头解决依赖会有意想不到的结果，特别是一部分你依赖的第三方库在你上一次更新的时候发布了新的版本。
+
+
+
+
+
+## 最后
+
+现在我们只差最后一步——在项目最开始的地方加入`require 'bundle/setup'`。它会帮你把`Gemfile`中指定的那些特定的版本加入到`$LOAD_PATH`，而且会事先把`$LOAD_PATH`中多余的东西清理掉让你不会误引用到其他的版本。现在你的代码就可以运行了，随意引用你需要的包，比如说你可以`require 'sinatra'`。
+
+如果你有很多依赖，你可能希望“引用所有我`Gemfile`的 gem”。如果要这样做的话，那你可以这样写：
+
+```ruby
+require 'rubygems' # Ruby 1.8 以后的版本不再需要这句
+require 'bundler/setup' # Set up gems listed in the Gemfile.
+Bundler.require(:default) # :default 也可以是你 Gemfile 其他的 group, 例如,:development 或 :test 
+```
 
 
 
